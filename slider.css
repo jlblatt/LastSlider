@@ -1,0 +1,14 @@
+      .slider-wrap {
+        position: relative;
+        overflow: hidden;
+      }
+      .slider {
+        position: relative;
+        width: 100%;
+      }
+        .slider > * {
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          box-sizing: border-box;
+        }
