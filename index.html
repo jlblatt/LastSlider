@@ -11,23 +11,51 @@
 
   <body>
 
+
+
+    <h1>Full Width, Infinite</h1>
+
     <div class="slider-wrap">
       <a class="ctrl prev">prev</a>
       <a class="ctrl next">next</a>
       <div class="pager"></div>
-      <div class="slider" data-slide-width="100" data-slide-units="%" data-infinite="true" data-display-time="6000" data-transition-time="300" data-autoplay="true" data-selector=".slide" style="height: 600px;">        
-        <div class="slide" style="background: rgb(255, 59, 48);"></div>
-        <div class="slide" style="background: rgb(255, 149, 0);"></div>
-        <div class="slide" style="background: rgb(255, 204, 0);"></div>
-        <div class="slide" style="background: rgb(76, 217, 100);"></div>
-        <div class="slide" style="background: rgb(52, 170, 220);"></div>
-        <div class="slide" style="background: rgb(0, 122, 255);"></div>
-        <div class="slide" style="background: rgb(88, 86, 214);"></div>
-        <div class="slide" style="background: rgb(255, 45, 85);"></div>
-        <div class="slide" style="background: rgb(142, 142, 147);"></div>
-        <div class="slide" style="background: rgb(199, 199, 204);"></div>
+      <div class="slider slider-1" data-slide-width="100" data-slide-units="%" data-infinite="true" data-display-time="60000" data-transition-time="300" data-autoplay="true">        
+        <div class="slide s0"></div>
+        <div class="slide s1"></div>
+        <div class="slide s2"></div>
+        <div class="slide s3"></div>
+        <div class="slide s4"></div>
+        <div class="slide s5"></div>
+        <div class="slide s6"></div>
+        <div class="slide s7"></div>
+        <div class="slide s8"></div>
+        <div class="slide s9"></div>
       </div>
     </div>
+
+
+
+    <h1>Finite With Breakpoints</h1>
+    
+    <div class="slider-wrap">
+      <a class="ctrl prev">prev</a>
+      <a class="ctrl next">next</a>
+      <div class="pager"></div>
+      <div class="slider slider-2" data-slide-width="15" data-slide-units="%" data-transition-time="200" data-start-at="2" data-breakpoints="[[480,80],[640,65],[800,50],[960,30],[1360,25],[9999,15]]">
+        <div class="slide s0"></div>
+        <div class="slide s1"></div>
+        <div class="slide s2"></div>
+        <div class="slide s3"></div>
+        <div class="slide s4"></div>
+        <div class="slide s5"></div>
+        <div class="slide s6"></div>
+        <div class="slide s7"></div>
+        <div class="slide s8"></div>
+        <div class="slide s9"></div>
+      </div>
+    </div>
+
+
 
   </body>
 
