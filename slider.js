@@ -28,7 +28,8 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
 
   function sizeSlider()
   {
-    $slider.css({left: -(sliderCurrPosition * sliderSlideWidth) + sliderSlideUnits});
+    if(sliderInfinite) $slider.css({left: 0});
+    else $slider.css({left: -(sliderCurrPosition * sliderSlideWidth) + sliderSlideUnits});
 
     var i = 0;
     if(sliderInfinite)
