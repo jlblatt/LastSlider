@@ -41,3 +41,9 @@ and can/should be omitted/overriden
 @media (max-width: 800px) { .slider-2 { transform: translate(-25%, 0); } }
 @media (max-width: 640px) { .slider-2 { transform: translate(-32.5%, 0); } }
 @media (max-width: 480px) { .slider-2 { transform: translate(-40%, 0); } }
+
+.slider-3 { transform: translate(37.5%, 0);}
+@media (max-width: 1280px) { .slider-3 { transform: translate(32.5%, 0); } }
+@media (max-width: 960px) { .slider-3 { transform: translate(25%, 0); } }
+@media (max-width: 640px) { .slider-3 { transform: translate(17.5%, 0); } }
+@media (max-width: 480px) { .slider-3 { transform: translate(10%, 0); } }
