@@ -1,10 +1,15 @@
 $(document).ready(function(){ $(".slider-wrap").each(function(){
 
+  ///////////////////////////////////////////////
+  //
+  // GLOBALS
+  //
+  ///////////////////////////////////////////////
+
   var $wrap = $(this);
   var $slider = $(this).find(".slider");
   var $slides = $slider.children();
 
-  //slider
   var sliderSlideTime = $slider.data("display-time");
   var sliderSlideSpeed = $slider.data("transition-time");
   var sliderSlideWidth = $slider.data("slide-width");
@@ -25,6 +30,12 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
   var sliderTransitionResetRequired = false;
   var sliderFirstTouchCheck = false;
   var sliderIgnoreNextTouchEnd = false;
+
+  ///////////////////////////////////////////////
+  //
+  // INIT
+  //
+  ///////////////////////////////////////////////
 
   function sizeSlider()
   {
@@ -52,7 +63,6 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
   $wrap.find(".pager > span").eq(sliderCurrPosition).addClass("active");
   $slides.eq(sliderCurrPosition).addClass("active");
 
-  //if infinite slider, make sure we have slides on either side
   if(sliderInfinite)
   {
     var slidesToMove = Math.floor(($slides.length - 1) / 2);
@@ -66,11 +76,11 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
 
   sizeSlider();
 
-  $wrap.find(".prev").on("click", sliderPrev);
-  $wrap.find(".next").on("click", sliderNext);
+  $wrap.find(".prev").on("click", function(){ slide('prev'); });
+  $wrap.find(".next").on("click", function(){ slide('next'); });
   $wrap.find(".down").on("click", function(){ scrollTo($(this).data("destination")); });
 
-  if(sliderAutoplay) var sliderInt = setInterval(sliderNext, sliderSlideTime);
+  if(sliderAutoplay) var sliderInt = setInterval(function(){ slide('next'); }, sliderSlideTime);
 
   if(sliderBreakpoints.length > 0)
   {
@@ -91,25 +101,47 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
     resizeSlider();
   }
 
-  function sliderPrev()
+  ///////////////////////////////////////////////
+  //
+  // SLIDE LEFT/RIGHT
+  //
+  ///////////////////////////////////////////////
+
+  function slide(dir)
   {
     if(sliderSwiping || sliderAnimating) return;
     else sliderAnimating = true;
 
     var dest = sliderSlideWidth + sliderSlideUnits;
+    if(dir == 'next') dest = "-" + dest;
+
     if(!sliderInfinite)
     {
-      if(sliderCurrPosition > 0) sliderCurrPosition--;
-      dest = -(sliderCurrPosition * sliderSlideWidth) + sliderSlideUnits;
+      if(dir == 'prev')
+      {
+        if(sliderCurrPosition > 0) sliderCurrPosition--;
+        dest = -(sliderCurrPosition * sliderSlideWidth) + sliderSlideUnits;
+      }
+
+      else
+      {
+        if(sliderCurrPosition < $slides.length - 1) sliderCurrPosition++;
+        dest = -(sliderCurrPosition * sliderSlideWidth) + sliderSlideUnits;
+      }
     }
 
-    else sliderCurrPosition--;
+    else 
+    {
+      if(dir == 'prev') sliderCurrPosition--;
+      else sliderCurrPosition++;
+    }
 
     $slider.animate({left: dest}, sliderSlideSpeed, function(){
       
       if(sliderInfinite)
       {
-        $slides.last().prependTo($slider);
+        if(dir == 'prev') $slides.last().prependTo($slider);
+        else $slides.first().appendTo($slider);
         $slides = $slider.children();
         
         var currOff = -Math.floor(($slides.length - 1) / 2) * sliderSlideWidth;
@@ -133,61 +165,16 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
       if(sliderAutoplay)
       {
         clearInterval(sliderInt);
-        sliderInt = setInterval(sliderNext, sliderSlideTime);
+        sliderInt = setInterval(function(){ slide('next'); }, sliderSlideTime);
       }
     });
   }
 
-
-
-  function sliderNext()
-  {
-    if(sliderSwiping || sliderAnimating) return;
-    else sliderAnimating = true;
-
-    var dest = "-" + sliderSlideWidth + sliderSlideUnits;
-    if(!sliderInfinite)
-    {
-      if(sliderCurrPosition < $slides.length - 1) sliderCurrPosition++;
-      dest = -(sliderCurrPosition * sliderSlideWidth) + sliderSlideUnits;
-    }
-
-    else sliderCurrPosition++;
-
-    $slider.animate({left: dest}, sliderSlideSpeed, function(){
-      if(sliderInfinite)
-      {
-        $slides.first().appendTo($slider);
-        $slides = $slider.children();
-        
-        var currOff = -Math.floor(($slides.length - 1) / 2) * sliderSlideWidth;
-        $slides.each(function(){
-          $(this).css({left: currOff + "%"});
-          currOff+= sliderSlideWidth;
-        });
-        
-        $slider.css({left: 0});
-      }
-
-      $wrap.find(".pager > span").removeClass("active");
-      $wrap.find(".pager > span").eq(sliderCurrPosition % $slides.length).addClass("active");
-
-      $slides.removeClass("active");
-      
-      if(sliderInfinite) $slides.eq(Math.floor(($slides.length - 1) / 2)).addClass("active");
-      else $slides.eq(sliderCurrPosition % $slides.length).addClass("active");
-
-      sliderAnimating = false;
-
-      if(sliderAutoplay)
-      {
-        clearInterval(sliderInt);
-        sliderInt = setInterval(sliderNext, sliderSlideTime);
-      }
-    });
-  }
-
-  
+  ///////////////////////////////////////////////
+  //
+  // TOUCH HANDLING
+  //
+  ///////////////////////////////////////////////
 
   $slider.on("touchstart", function(e){ 
     if(sliderAnimating)
@@ -221,8 +208,8 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
 
     if(sliderLastTouchLocX == 0) return;
     
-    if(distX > 40) sliderPrev();
-    else if(distX < -40) sliderNext();
+    if(distX > 40) slide('prev');
+    else if(distX < -40) slide('next');
     else $(this).animate({left: (-sliderCurrPosition * sliderSlideWidth) + sliderSlideUnits}, speed);
 
     sliderSwipeStartLocX = 0;
