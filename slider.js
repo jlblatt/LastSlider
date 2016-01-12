@@ -12,7 +12,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
   var sliderBreakpoints = $slider.data("breakpoints") ? $slider.data("breakpoints") : [];
   var sliderAutoplay = $slider.data("autoplay");
   var sliderInfinite = $slider.data("infinite");
-  var sliderStartAt = isNaN($slider.data("start-at")) ? 1 : $slider.data("start-at");
+  var sliderStartAt = sliderInfinite || isNaN($slider.data("start-at")) ? 1 : $slider.data("start-at");
 
   var sliderAnimating = false;
   var sliderSwiping = false;
@@ -34,8 +34,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
     var i = 0;
     if(sliderInfinite)
     {
-      i = -1;
-      if($slides.length > 4) i = -2;
+      i = -Math.floor(($slides.length - 1) / 2);
     }
 
     $slides.each(function(){
@@ -53,15 +52,14 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
   $wrap.find(".pager > span").eq(sliderCurrPosition).addClass("active");
   $slides.eq(sliderCurrPosition).addClass("active");
 
-  //if endless slider, make sure we have at least slide on each side (2 if possible)
+  //if infinite slider, make sure we have slides on either side
   if(sliderInfinite)
   {
-    $slides.last().css({left: "-" + sliderSlideWidth + sliderSlideUnits}).prependTo($slider);
-    $slides = $slider.children();
-
-    if($slides.length > 4)
+    var slidesToMove = Math.floor(($slides.length - 1) / 2);
+    for(var i = 0; i < slidesToMove; i++)
     {
-      $slides.last().css({left: "-" + (2 * sliderSlideWidth) + sliderSlideUnits}).prependTo($slider);
+      var mult = (i + 1);
+      $slides.last().css({left: "-" + (mult * sliderSlideWidth) + sliderSlideUnits}).prependTo($slider);
       $slides = $slider.children();
     }
   }
@@ -114,7 +112,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
         $slides.last().prependTo($slider);
         $slides = $slider.children();
         
-        var currOff = $slides.length > 4 ? -2 * sliderSlideWidth : -sliderSlideWidth;
+        var currOff = -Math.floor(($slides.length - 1) / 2) * sliderSlideWidth;
         $slides.each(function(){
           $(this).css({left: currOff + "%"});
           currOff+= sliderSlideWidth;
@@ -127,7 +125,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
       $wrap.find(".pager > span").eq(sliderCurrPosition % $slides.length).addClass("active");
 
       $slides.removeClass("active");
-      if(sliderInfinite) $slides.eq($slides.length > 4 ? 2 : 1).addClass("active");
+      if(sliderInfinite) $slides.eq(Math.floor(($slides.length - 1) / 2)).addClass("active");
       else $slides.eq(sliderCurrPosition % $slides.length).addClass("active");
 
       sliderAnimating = false;
@@ -162,7 +160,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
         $slides.first().appendTo($slider);
         $slides = $slider.children();
         
-        var currOff = $slides.length > 4 ? -2 * sliderSlideWidth : -sliderSlideWidth;
+        var currOff = -Math.floor(($slides.length - 1) / 2) * sliderSlideWidth;
         $slides.each(function(){
           $(this).css({left: currOff + "%"});
           currOff+= sliderSlideWidth;
@@ -176,7 +174,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
 
       $slides.removeClass("active");
       
-      if(sliderInfinite) $slides.eq($slides.length > 4 ? 2 : 1).addClass("active");
+      if(sliderInfinite) $slides.eq(Math.floor(($slides.length - 1) / 2)).addClass("active");
       else $slides.eq(sliderCurrPosition % $slides.length).addClass("active");
 
       sliderAnimating = false;
