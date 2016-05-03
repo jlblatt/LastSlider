@@ -40,7 +40,6 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
 
   if(sliderMinSlides > 0)
   {
-    console.log('here');
     while($slides.length < sliderMinSlides)
     {
       $slider.append($slides.clone());
