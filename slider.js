@@ -49,8 +49,16 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
 
   for(var i = 0; i < $slides.length; i++)
   {
-    $wrap.find(".pager").append('<span></span>');
+    $slides.eq(i).data('sid', i);
+    $wrap.find(".pager").append('<span data-sid="' + i + '"></span>');
   }
+
+  $wrap.find(".pager > span").on("click", function(){
+    if(!$(this).hasClass("active"))
+    {
+      gotoSlide($(this).data('sid'));
+    }
+  });
 
   $wrap.find(".pager > span").eq(sliderCurrPosition).addClass("active");
   $slides.eq(sliderCurrPosition).addClass("active");
@@ -106,7 +114,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
         }
       }
     }
-    $(window).on("resize debouncedresize", resizeSlider);  
+    $(window).on("debouncedresize", resizeSlider);  
     $(window).on("orientationchange", function(){ setTimeout(resizeSlider, 150);});
     resizeSlider();
   }
@@ -117,9 +125,9 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
   //
   ///////////////////////////////////////////////
 
-  function slide(dir)
+  function slide(dir, override)
   {
-    if(sliderSwiping || sliderAnimating) return;
+    if(!override && (sliderSwiping || sliderAnimating)) return;
     else sliderAnimating = true;
 
     var dest = sliderSlideWidth + sliderSlideUnits;
@@ -146,7 +154,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
       else sliderCurrPosition++;
     }
 
-    $slider.animate({left: dest}, sliderSlideSpeed, function(){
+    $slider.animate({left: dest}, !override ? sliderSlideSpeed : 0, function(){
       
       if(sliderInfinite)
       {
@@ -172,7 +180,7 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
 
       sliderAnimating = false;
 
-      if(sliderAutoplay)
+      if(!override && sliderAutoplay)
       {
         clearInterval(sliderInt);
         sliderInt = setInterval(function(){ slide('next'); }, sliderSlideTime);
@@ -261,5 +269,55 @@ $(document).ready(function(){ $(".slider-wrap").each(function(){
       $(this).css({left: dest});
     }
   });
+
+  ///////////////////////////////////////////////
+  //
+  // GOTO SLIDE (FADE)
+  //
+  ///////////////////////////////////////////////
+
+  function gotoSlide(sid) {
+
+    if(sliderSwiping || sliderAnimating) return;
+
+    if(sliderAutoplay) 
+    {
+      clearInterval(sliderInt);
+    }
+
+    $wrap.fadeTo('fast', 0, function() {
+
+      //shuffle
+      var currSid = $slider.children(".active").data('sid');
+      var destSid = sid;
+      var distance = Math.abs(currSid - destSid);
+      var dir = destSid < currSid ? 'prev' : 'next';
+
+      var tmpFadeInt = setInterval(function(){
+
+        if(distance > 0 && !sliderAnimating)
+        {
+          distance--;
+          slide(dir, true);
+        }
+
+        else if(distance == 0 && !sliderAnimating)
+        {
+          clearInterval(tmpFadeInt);
+          $wrap.fadeTo('fast', 1, function() {
+
+            if(sliderAutoplay) 
+            {
+              sliderInt = setInterval(function(){ slide('next'); }, sliderSlideTime);
+            }
+
+          });
+        }
+
+      }, 10);
+
+    });
+
+  }
 
 }); });
